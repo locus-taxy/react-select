@@ -71,6 +71,7 @@ const Select = React.createClass({
 		inputRenderer: React.PropTypes.func,        // returns a custom input component
 		instanceId: React.PropTypes.string,         // set the components instanceId
 		isLoading: React.PropTypes.bool,            // whether the Select is loading externally or not (such as options being loaded)
+		isOpen: React.PropTypes.bool,               // Pass a boolean to start controlling the open state externally, null to let react-select manage it
 		joinValues: React.PropTypes.bool,           // joins multiple values into a single form field with the delimiter (legacy mode)
 		labelKey: React.PropTypes.string,           // path of the label value in option objects
 		matchPos: React.PropTypes.string,           // (any|start) match the start or entire string when filtering
@@ -138,6 +139,7 @@ const Select = React.createClass({
 			ignoreCase: true,
 			inputProps: {},
 			isLoading: false,
+			isOpen: null,
 			joinValues: false,
 			labelKey: 'label',
 			matchPos: 'any',
@@ -166,7 +168,7 @@ const Select = React.createClass({
 		return {
 			inputValue: '',
 			isFocused: false,
-			isOpen: false,
+			isOpen: this.props.isOpen !== null ? this.props.isOpen : false,
 			isPseudoFocused: false,
 			required: false,
 		};
@@ -195,6 +197,11 @@ const Select = React.createClass({
 		if (nextProps.required) {
 			this.setState({
 				required: this.handleRequired(valueArray[0], nextProps.multi),
+			});
+		}
+		if (nextProps.isOpen !== null) {
+			this.setState({
+				isOpen: nextProps.isOpen,
 			});
 		}
 	},
