@@ -58,9 +58,9 @@ const Select = createClass({
 		backspaceRemoves: PropTypes.bool,     // whether backspace removes an item if there is no text input
 		backspaceToRemoveMessage: PropTypes.string,  // Message to use for screenreaders to press backspace to remove the current item - {label} is replaced with the item label
 		className: PropTypes.string,          // className for the outer element
-		clearAllText: stringOrNode,                 // title for the "clear" control when multi: true
+		clearAllText: stringOrNode,           // title for the "clear" control when multi: true
 		clearRenderer: PropTypes.func,        // create clearable x element
-		clearValueText: stringOrNode,               // title for the "clear" control
+		clearValueText: stringOrNode,         // title for the "clear" control
 		clearable: PropTypes.bool,            // should it be possible to reset value
 		deleteRemoves: PropTypes.bool,        // whether backspace removes an item if there is no text input
 		delimiter: PropTypes.string,          // delimiter to use to join multiple values for the hidden field value
@@ -74,6 +74,7 @@ const Select = createClass({
 		inputRenderer: PropTypes.func,        // returns a custom input component
 		instanceId: PropTypes.string,         // set the components instanceId
 		isLoading: PropTypes.bool,            // whether the Select is loading externally or not (such as options being loaded)
+		isOpen: PropTypes.bool,         	  // Pass a boolean to start controlling the open state externally, null to let react-select manage it
 		joinValues: PropTypes.bool,           // joins multiple values into a single form field with the delimiter (legacy mode)
 		labelKey: PropTypes.string,           // path of the label value in option objects
 		matchPos: PropTypes.string,           // (any|start) match the start or entire string when filtering
@@ -141,6 +142,7 @@ const Select = createClass({
 			ignoreCase: true,
 			inputProps: {},
 			isLoading: false,
+			isOpen: null,
 			joinValues: false,
 			labelKey: 'label',
 			matchPos: 'any',
@@ -168,7 +170,7 @@ const Select = createClass({
 		return {
 			inputValue: '',
 			isFocused: false,
-			isOpen: false,
+			isOpen: this.props.isOpen !== null ? this.props.isOpen : false,
 			isPseudoFocused: false,
 			required: false,
 		};
@@ -197,6 +199,11 @@ const Select = createClass({
 		if (nextProps.required) {
 			this.setState({
 				required: this.handleRequired(valueArray[0], nextProps.multi),
+			});
+		}
+		if (nextProps.isOpen !== null) {
+			this.setState({
+				isOpen: nextProps.isOpen,
 			});
 		}
 	},
