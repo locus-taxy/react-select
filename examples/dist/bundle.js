@@ -40,6 +40,7 @@ var propTypes = {
 	loadingPlaceholder: _react2['default'].PropTypes.oneOfType([// replaces the placeholder while options are loading
 	_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]),
 	loadOptions: _react2['default'].PropTypes.func.isRequired, // callback to load options asynchronously; (inputValue: string, callback: Function): ?Promise
+	multi: _react2['default'].PropTypes.bool, // multi-value input
 	options: _react.PropTypes.array.isRequired, // array of options
 	placeholder: _react2['default'].PropTypes.oneOfType([// field placeholder, displayed when there's no value (shared with Select)
 	_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]),
@@ -1152,6 +1153,7 @@ var Select = _react2['default'].createClass({
 		inputRenderer: _react2['default'].PropTypes.func, // returns a custom input component
 		instanceId: _react2['default'].PropTypes.string, // set the components instanceId
 		isLoading: _react2['default'].PropTypes.bool, // whether the Select is loading externally or not (such as options being loaded)
+		isOpen: _react2['default'].PropTypes.bool, // Pass a boolean to start controlling the open state externally, null to let react-select manage it
 		joinValues: _react2['default'].PropTypes.bool, // joins multiple values into a single form field with the delimiter (legacy mode)
 		labelKey: _react2['default'].PropTypes.string, // path of the label value in option objects
 		matchPos: _react2['default'].PropTypes.string, // (any|start) match the start or entire string when filtering
@@ -1219,6 +1221,7 @@ var Select = _react2['default'].createClass({
 			ignoreCase: true,
 			inputProps: {},
 			isLoading: false,
+			isOpen: null,
 			joinValues: false,
 			labelKey: 'label',
 			matchPos: 'any',
@@ -1247,7 +1250,7 @@ var Select = _react2['default'].createClass({
 		return {
 			inputValue: '',
 			isFocused: false,
-			isOpen: false,
+			isOpen: this.props.isOpen !== null ? this.props.isOpen : false,
 			isPseudoFocused: false,
 			required: false
 		};
@@ -1276,6 +1279,11 @@ var Select = _react2['default'].createClass({
 		if (nextProps.required) {
 			this.setState({
 				required: this.handleRequired(valueArray[0], nextProps.multi)
+			});
+		}
+		if (nextProps.isOpen !== null) {
+			this.setState({
+				isOpen: nextProps.isOpen
 			});
 		}
 	},
@@ -1441,7 +1449,7 @@ var Select = _react2['default'].createClass({
 			});
 		} else {
 			// otherwise, focus the input and open the menu
-			this._openAfterFocus = true;
+			this._openAfterFocus = this.props.openOnFocus;
 			this.focus();
 		}
 	},
@@ -2145,7 +2153,14 @@ var Select = _react2['default'].createClass({
 
 		var focusedOption = this.state.focusedOption || selectedOption;
 		if (focusedOption && !focusedOption.disabled) {
-			var focusedOptionIndex = options.indexOf(focusedOption);
+			var focusedOptionIndex = -1;
+			options.some(function (option, index) {
+				var isOptionEqual = option.value === focusedOption.value;
+				if (isOptionEqual) {
+					focusedOptionIndex = index;
+				}
+				return isOptionEqual;
+			});
 			if (focusedOptionIndex !== -1) {
 				return focusedOptionIndex;
 			}
