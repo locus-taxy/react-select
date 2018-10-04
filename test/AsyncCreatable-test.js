@@ -14,16 +14,17 @@ var expect = unexpected
 
 var React = require('react');
 var ReactDOM = require('react-dom');
-var TestUtils = require('react-addons-test-utils');
+var TestUtils = require('react-dom/test-utils');
 var sinon = require('sinon');
 var Select = require('../src/Select');
+var ShallowRenderer = require('react-test-renderer/shallow');
 
 describe('AsyncCreatable', () => {
 	let creatableInstance, creatableNode, filterInputNode, loadOptions, renderer;
 
 	beforeEach(() => {
 		loadOptions = sinon.stub();
-		renderer = TestUtils.createRenderer();
+		renderer = new ShallowRenderer();
 	});
 
 	function createControl (props = {}) {
