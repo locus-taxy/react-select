@@ -1201,6 +1201,7 @@ var Select = (0, _createReactClass2['default'])({
 		inputRenderer: _propTypes2['default'].func, // returns a custom input component
 		instanceId: _propTypes2['default'].string, // set the components instanceId
 		isLoading: _propTypes2['default'].bool, // whether the Select is loading externally or not (such as options being loaded)
+		isOpen: _propTypes2['default'].bool, // Pass a boolean to start controlling the open state externally, null to let react-select manage it
 		joinValues: _propTypes2['default'].bool, // joins multiple values into a single form field with the delimiter (legacy mode)
 		labelKey: _propTypes2['default'].string, // path of the label value in option objects
 		matchPos: _propTypes2['default'].string, // (any|start) match the start or entire string when filtering
@@ -1268,6 +1269,7 @@ var Select = (0, _createReactClass2['default'])({
 			ignoreCase: true,
 			inputProps: {},
 			isLoading: false,
+			isOpen: null,
 			joinValues: false,
 			labelKey: 'label',
 			matchPos: 'any',
@@ -1295,7 +1297,7 @@ var Select = (0, _createReactClass2['default'])({
 		return {
 			inputValue: '',
 			isFocused: false,
-			isOpen: false,
+			isOpen: this.props.isOpen !== null ? this.props.isOpen : false,
 			isPseudoFocused: false,
 			required: false
 		};
@@ -1324,6 +1326,11 @@ var Select = (0, _createReactClass2['default'])({
 		if (nextProps.required) {
 			this.setState({
 				required: this.handleRequired(valueArray[0], nextProps.multi)
+			});
+		}
+		if (nextProps.isOpen !== null) {
+			this.setState({
+				isOpen: nextProps.isOpen
 			});
 		}
 	},
